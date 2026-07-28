@@ -99,7 +99,6 @@
             <label for="country_code">Country <span class="req">*</span></label>
             <select id="country_code" name="country_code" class="select">
               <option value="">--None--</option>
-              <option value="US">US</option>
               <option value="AF">AF</option>
               <option value="AX">AX</option>
               <option value="AL">AL</option>
@@ -391,6 +390,7 @@
             </select>
             <div class="error" data-err="00NVW0000016gZR"></div>
           </div>
+
         </div>
 
         <div class="section-header flex items-center gap-3 px-5 py-3 rounded-xl mb-4 mt-6">
@@ -423,8 +423,8 @@
         </div>
 
         <div class="field mb-4">
-          <label for="00NU8000005sqoL">Primary Academic Term <span class="req">*</span></label>
-          <select id="00NU8000005sqoL" name="00NU8000005sqoL" title="Primary Academic Term" class="select">
+          <label for="00NcY000001s4cL">Primary Academic Term<span class="req">*</span></label>
+          <select id="00NcY000001s4cL" name="00NcY000001s4cL" title="Academic Term1" class="select">
             <option value="">--None--</option>
             <option value="Fall 2025">Fall 2025</option>
             <option value="Spring 2026">Spring 2026</option>
@@ -433,7 +433,7 @@
             <option value="Summer 2027">Summer 2027</option>
             <option value="Spring 2027">Spring 2027</option>
           </select>
-          <div class="error" data-err="00NU8000005sqoL"></div>
+          <div class="error" data-err="00NcY000001s4cL"></div>
         </div>
 
         <div class="field mb-4 flex items-center gap-2">
@@ -598,7 +598,7 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
     '00NcY000001s3ef': f['00NcY000001s3ef'].value.trim(),
     '00NVW0000016gZR': f['00NVW0000016gZR'].value,
     '00NcY000001s4Z7': f['00NcY000001s4Z7'].value,
-    '00NU8000005sqoL': f['00NU8000005sqoL'].value
+    '00NcY000001s4cL': f['00NcY000001s4cL'].value
   };
 
   let ok = true;
@@ -612,7 +612,7 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
     '00NcY000001s3ef': 'Date of birth is required',
     '00NVW0000016gZR': 'Please select a preferred communication method',
     '00NcY000001s4Z7': 'Please select a primary learning program',
-    '00NU8000005sqoL': 'Please select a primary academic term'
+    '00NcY000001s4cL': 'Please select an academic term'
   };
 
   for (const k in required) {
@@ -659,7 +659,7 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
     '00NcY000001s3ef': fmtDateMDY(data['00NcY000001s3ef']),
     '00NVW0000016gZR': data['00NVW0000016gZR'],
     '00NcY000001s4Z7': data['00NcY000001s4Z7'],
-    '00NU8000005sqoL': data['00NU8000005sqoL'],
+    '00NcY000001s4cL': data['00NcY000001s4cL'],
     lead_source: 'Website'
   });
 
