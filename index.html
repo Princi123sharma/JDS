@@ -99,6 +99,7 @@
             <label for="country_code">Country <span class="req">*</span></label>
             <select id="country_code" name="country_code" class="select">
               <option value="">--None--</option>
+              <option value="US">US</option>
               <option value="AF">AF</option>
               <option value="AX">AX</option>
               <option value="AL">AL</option>
@@ -345,10 +346,18 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div class="field">
-            <label for="00NU8000005sqy1">Phone <span class="req">*</span></label>
-            <input id="00NU8000005sqy1" maxlength="40" name="00NU8000005sqy1" size="20" type="text" class="input" placeholder="Phone number" />
-            <div class="error" data-err="00NU8000005sqy1"></div>
-          </div>
+  <label for="00NU8000005sqy1">Phone <span class="req">*</span></label>
+  <input
+    id="00NU8000005sqy1"
+    maxlength="40"
+    name="00NU8000005sqy1"
+    size="20"
+    type="tel"
+    class="input"
+    placeholder="Phone number"
+  />
+  <div class="error" data-err="00NU8000005sqy1"></div>
+</div>
 
           <div class="field">
             <label for="00NU8000004zneF">Gender <span class="req">*</span></label>
@@ -473,7 +482,7 @@
           </div>
         </div>
 
-        <input type="hidden" id="lead_source" name="lead_source" value="Web" />
+        <input type="hidden" id="lead_source" name="lead_source" value="Website" />
 
         <button type="submit" class="btn-primary mt-4">Submit Inquiry</button>
       </form>
@@ -651,7 +660,7 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
     '00NVW0000016gZR': data['00NVW0000016gZR'],
     '00NcY000001s4Z7': data['00NcY000001s4Z7'],
     '00NU8000005sqoL': data['00NU8000005sqoL'],
-    lead_source: 'Web'
+    lead_source: 'Website'
   });
 
   body.append('00NU8000005pX8m', addSecond.checked ? '1' : '0');
