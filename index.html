@@ -24,6 +24,7 @@
   .req{color:var(--destructive);}
   .input,.select{width:100%;height:2.5rem;padding:0 .75rem;border:1px solid #e5e7eb;border-radius:.5rem;background:#fff;font-size:.875rem;font-family:inherit;}
   .input:focus,.select:focus{outline:none;border-color:var(--brand-purple);box-shadow:0 0 0 3px rgba(63,30,83,.15);}
+  .input:disabled,.select:disabled{background:#f9fafb;color:#9ca3af;cursor:not-allowed;}
   .btn-primary{background:var(--gradient-brand);color:#fff;font-weight:600;padding:.75rem 1.5rem;border-radius:.5rem;width:100%;font-size:1rem;transition:opacity .2s;border:none;cursor:pointer;}
   .btn-primary:hover{opacity:.92;}
   .btn-primary:disabled{opacity:.6;cursor:not-allowed;}
@@ -87,6 +88,16 @@
             <div class="error" data-err="last_name"></div>
           </div>
         </div>
+
+        <div id="personal-details-row" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4"></div>
+        <div id="personal-country-row" class="mb-4"></div>
+
+        <div class="section-header flex items-center gap-3 px-5 py-3 rounded-xl mb-4 mt-6">
+          <span class="uppercase tracking-wide text-sm font-semibold">Contact Information</span>
+        </div>
+        <div id="contact-email-row" class="mb-4"></div>
+        <div id="contact-phone-row" class="mb-4"></div>
+        <div id="contact-preferred-row" class="mb-4"></div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div class="field">
@@ -394,7 +405,7 @@
         </div>
 
         <div class="section-header flex items-center gap-3 px-5 py-3 rounded-xl mb-4 mt-6">
-          <span class="uppercase tracking-wide text-sm font-semibold">Academic Interest</span>
+          <span class="uppercase tracking-wide text-sm font-semibold">Academic Information</span>
         </div>
 
         <div class="field mb-4">
@@ -415,16 +426,14 @@
             <option value="Bachelor of Science in Business Administration">Bachelor of Science in Business Administration</option>
             <option value="Bachelor of Science in Church Leadership">Bachelor of Science in Church Leadership</option>
             <option value="Bachelor of Science in Humanitarian Leadership">Bachelor of Science in Humanitarian Leadership</option>
-            <option value="Reading the Bible for All Its Worth">Reading the Bible for All Its Worth</option>
             <option value="Women in Leadership">Women in Leadership</option>
-            <option value="Worship Arts Leadership">Worship Arts Leadership</option>
           </select>
           <div class="error" data-err="00NcY000001s4Z7"></div>
         </div>
 
         <div class="field mb-4">
           <label for="00NcY000001s4cL">Primary Academic Term<span class="req">*</span></label>
-          <select id="00NcY000001s4cL" name="00NcY000001s4cL" title="Academic Term1" class="select">
+          <select id="00NcY000001s4cL" name="00NcY000001s4cL" title="Academic Term1" class="select" disabled>
             <option value="">--None--</option>
             <option value="Fall 2025">Fall 2025</option>
             <option value="Spring 2026">Spring 2026</option>
@@ -460,9 +469,7 @@
               <option value="Bachelor of Science in Business Administration">Bachelor of Science in Business Administration</option>
               <option value="Bachelor of Science in Church Leadership">Bachelor of Science in Church Leadership</option>
               <option value="Bachelor of Science in Humanitarian Leadership">Bachelor of Science in Humanitarian Leadership</option>
-              <option value="Reading the Bible for All Its Worth">Reading the Bible for All Its Worth</option>
               <option value="Women in Leadership">Women in Leadership</option>
-              <option value="Worship Arts Leadership">Worship Arts Leadership</option>
             </select>
             <div class="error" data-err="00NU8000005pX8o"></div>
           </div>
@@ -510,10 +517,102 @@ const SALESFORCE_ENDPOINT = `https://test.salesforce.com/servlet/servlet.WebToLe
 const RETURN_URL = "http://";
 
 const addSecond = document.getElementById('00NU8000005pX8m');
-
-
 const secondSection = document.getElementById('second-program-section');
 const countrySelect = document.getElementById('country_code');
+const primaryProgram = document.getElementById('00NcY000001s4Z7');
+const primaryAcademicTerm = document.getElementById('00NcY000001s4cL');
+const secondaryProgram = document.getElementById('00NU8000005pX8o');
+const secondaryAcademicTerm = document.getElementById('00NU8000005pX8n');
+
+const programTermMapping = {
+  "Doctor of Leadership": ["Fall 2025", "Spring 2026", "Summer 2026"],
+  "Doctor of Ministry": ["Fall 2026", "Spring 2027", "Summer 2027"],
+  "Certificate in Biblical Studies": ["Fall 2025", "Spring 2026"],
+  "Certificate in Theological Leadership": ["Summer 2026", "Fall 2026"],
+  "Women in Leadership": ["Fall 2025", "Summer 2026"],
+  "Bachelor of Arts in Psychology": ["Fall 2025", "Spring 2026"],
+  "Bachelor of Arts in Theology": ["Summer 2026", "Fall 2026"],
+  "Bachelor of Science in Business Administration": ["Fall 2025", "Spring 2026", "Summer 2026"],
+  "Bachelor of Science in Church Leadership": ["Spring 2027", "Summer 2027"],
+  "Bachelor of Science in Humanitarian Leadership": ["Fall 2026", "Spring 2027", "Summer 2027"],
+  "Master of Business Administration": ["Spring 2027", "Summer 2027"],
+  "Master of Arts in Biblical Theology": ["Fall 2025", "Summer 2026"],
+  "Master of Arts in Leadership Studies": ["Fall 2026", "Spring 2027"],
+  "Master of Arts in Strategic Leadership": ["Fall 2025", "Spring 2026"],
+  "Master of Arts in Theology": ["Summer 2026", "Fall 2026"]
+};
+
+const isDegreeProgram = program => /^(Bachelor|Master|Doctor)/.test(program);
+const secondaryCertificatePrograms = [
+  "Certificate in Biblical Studies",
+  "Certificate in Theological Leadership",
+  "Women in Leadership"
+];
+const primaryProgramOptions = [...primaryProgram.options]
+  .map(option => option.value)
+  .filter(Boolean);
+
+function fillTerms(select, program) {
+  select.innerHTML = '<option value="">--None--</option>';
+  (programTermMapping[program] || []).forEach(term => {
+    const option = new Option(term, term);
+    select.add(option);
+  });
+}
+
+function fillSecondaryPrograms(primaryProgramValue) {
+  secondaryProgram.innerHTML = '<option value="">--None--</option>';
+  if (!primaryProgramValue) return;
+
+  const availablePrograms = isDegreeProgram(primaryProgramValue)
+    ? secondaryCertificatePrograms
+    : primaryProgramOptions.filter(isDegreeProgram);
+
+  availablePrograms.forEach(program => secondaryProgram.add(new Option(program, program)));
+}
+
+function moveField(fieldId, destinationId) {
+  const field = document.getElementById(fieldId)?.closest('.field');
+  const destination = document.getElementById(destinationId);
+  if (!field || !destination) return;
+
+  const sourceRow = field.parentElement;
+  destination.appendChild(field);
+  if (!sourceRow.querySelector('.field')) sourceRow.remove();
+}
+
+// Arrange the fields in the same order as the inquiry form design.
+moveField('00NcY000001s3ef', 'personal-details-row');
+moveField('00NU8000004zneF', 'personal-details-row');
+moveField('country_code', 'personal-country-row');
+moveField('email', 'contact-email-row');
+moveField('00NU8000005sqy1', 'contact-phone-row');
+moveField('00NVW0000016gZR', 'contact-preferred-row');
+
+function syncPrimaryAcademicTerm() {
+  const hasPrimaryProgram = Boolean(primaryProgram.value);
+  primaryAcademicTerm.disabled = !hasPrimaryProgram;
+  if (!hasPrimaryProgram) {
+    primaryAcademicTerm.value = '';
+    clearErr('00NcY000001s4cL');
+  }
+}
+
+primaryProgram.addEventListener('change', () => {
+  fillTerms(primaryAcademicTerm, primaryProgram.value);
+  fillSecondaryPrograms(primaryProgram.value);
+  secondaryAcademicTerm.innerHTML = '<option value="">--None--</option>';
+  syncPrimaryAcademicTerm();
+});
+syncPrimaryAcademicTerm();
+
+secondaryProgram.addEventListener('change', () => {
+  fillTerms(secondaryAcademicTerm, secondaryProgram.value);
+});
+
+fillTerms(primaryAcademicTerm, '');
+fillSecondaryPrograms('');
+fillTerms(secondaryAcademicTerm, '');
 
 function setErr(name, msg) {
   const el = document.querySelector(`[data-err="${name}"]`);
@@ -611,8 +710,7 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
     '00NU8000004zneF': 'Gender is required',
     '00NcY000001s3ef': 'Date of birth is required',
     '00NVW0000016gZR': 'Please select a preferred communication method',
-    '00NcY000001s4Z7': 'Please select a primary learning program',
-    '00NcY000001s4cL': 'Please select an academic term'
+    '00NcY000001s4Z7': 'Please select a primary learning program'
   };
 
   for (const k in required) {
@@ -622,6 +720,13 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
     } else {
       clearErr(k);
     }
+  }
+
+  if (data['00NcY000001s4Z7'] && !data['00NcY000001s4cL']) {
+    setErr('00NcY000001s4cL', 'Please select an academic term');
+    ok = false;
+  } else {
+    clearErr('00NcY000001s4cL');
   }
 
   if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
@@ -689,6 +794,10 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
   f.reset();
   addSecond.checked = false;
   secondSection.classList.add('hidden');
+  fillTerms(primaryAcademicTerm, '');
+  fillSecondaryPrograms('');
+  fillTerms(secondaryAcademicTerm, '');
+  syncPrimaryAcademicTerm();
   btn.disabled = false;
   btn.textContent = 'Submit Inquiry';
   window.scrollTo({ top: 0, behavior: 'smooth' });
